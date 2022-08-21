@@ -1,4 +1,4 @@
-module fIleHandlingW3Tutorial {
+module fIleHandlingW3T {
 	requires java.logging;
 	requires org.json;
 }

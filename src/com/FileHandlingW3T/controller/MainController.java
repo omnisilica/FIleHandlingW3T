@@ -1,4 +1,4 @@
-package com.FileHandlingW3Tutorial.controller;
+package com.FileHandlingW3T.controller;
 
 import java.io.File;
 import java.io.FileWriter;
