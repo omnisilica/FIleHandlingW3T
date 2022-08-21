@@ -14,25 +14,46 @@ public class MainController {
 	private static Logger logger = Logger.getLogger(MainController.class.getName());
 
 	public static void main(String[] args) {
+		
+		String baseDirectory = System.getProperty("user.dir");
+		logger.log(Level.INFO, baseDirectory + ".\n");
+		
+		String fileName = "filename.txt";
+		
+		String fileDestination = baseDirectory + "\\src\\resources\\";
+		logger.log(Level.INFO, fileDestination + ".\n");
+		logger.log(Level.INFO, fileDestination + fileName + ".\n");
+		
+		File directory = new File(fileDestination);
+		
+		String fileNamePath = fileDestination + fileName;
+		
+		File objectFile = new File(fileNamePath);
+		
+		createTextFile(directory, objectFile);
+		
+		writeToFile(fileNamePath, "File content.");
+		
+		readFile(objectFile);
+		
 		try {
-			String baseDirectory = System.getProperty("user.dir");
-			logger.log(Level.INFO, baseDirectory + ".\n");
-			
-			String fileName = "filename.txt";
-						
-			String fileDestination = baseDirectory + "\\src\\resources\\";
-			logger.log(Level.INFO, fileDestination + ".\n");
-			logger.log(Level.INFO, fileDestination + fileName + ".\n");
-			
-			File directory = new File(fileDestination);
+			getFileInfo(objectFile);
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "File probably doesn't exist.\n");
+			e.printStackTrace();
+		}
+		
+		
+
+	}
+	
+	public static void createTextFile(File directory, File objectFile) {
+		
+		try {
 			
 			if(!directory.exists()) {
 				directory.mkdir();
 			}
-			
-			String fileNamePath = fileDestination + fileName;
-			
-			File objectFile = new File(fileNamePath);
 			
 			if(objectFile.createNewFile()) {
 				logger.log(Level.INFO, "File created: " + objectFile.getName() + ".\n");
@@ -40,16 +61,12 @@ public class MainController {
 				logger.log(Level.INFO, "File already exists." + "\n");
 			}
 			
-			writeToFile(fileNamePath, "File content.");
 			
-			readFile(objectFile);
-			
-			getFileInfo(objectFile);
 		} catch(IOException e) {
 			logger.log(Level.WARNING, "Something went wrong." + "\n");
 			e.printStackTrace();
 		}
-
+		
 	}
 	
 	public static void writeToFile(String fileName, String fileContent) {
@@ -94,6 +111,8 @@ public class MainController {
 			
 			logger.log(Level.INFO, jsonObject.toString(4));
 		}
+		
+		
 	}
 
 }
