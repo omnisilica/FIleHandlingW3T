@@ -7,6 +7,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONObject;
+
 public class MainController {
 	
 	private static Logger logger = Logger.getLogger(MainController.class.getName());
@@ -41,6 +43,8 @@ public class MainController {
 			writeToFile(fileNamePath, "File content.");
 			
 			readFile(objectFile);
+			
+			getFileInfo(objectFile);
 		} catch(IOException e) {
 			logger.log(Level.WARNING, "Something went wrong." + "\n");
 			e.printStackTrace();
@@ -76,6 +80,20 @@ public class MainController {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static void getFileInfo(File file) throws IOException {
+		
+		JSONObject jsonObject = new JSONObject();
+		
+		if(file.exists()) {
+			jsonObject.put("File name", file.getName());
+			jsonObject.put("Writeable", file.canWrite());
+			jsonObject.put("Readable", file.canRead());
+			jsonObject.put("File size in bytes", file.length());
+			
+			logger.log(Level.INFO, jsonObject.toString(4));
+		}
 	}
 
 }
