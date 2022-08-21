@@ -30,6 +30,8 @@ public class MainController {
 		
 		File objectFile = new File(fileNamePath);
 		
+		JSONObject jsonFile = new JSONObject(); 
+		
 		createTextFile(directory, objectFile);
 		
 		writeToFile(fileNamePath, "File content.");
@@ -37,13 +39,13 @@ public class MainController {
 		readFile(objectFile);
 		
 		try {
-			getFileInfo(objectFile);
+			jsonFile = getFileInfo(objectFile);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "File probably doesn't exist.\n");
 			e.printStackTrace();
 		}
 		
-		
+		updateFileInfo(jsonFile, objectFile);
 
 	}
 	
@@ -99,7 +101,7 @@ public class MainController {
 		
 	}
 	
-	public static void getFileInfo(File file) throws IOException {
+	public static JSONObject getFileInfo(File file) throws IOException {
 		
 		JSONObject jsonObject = new JSONObject();
 		
@@ -112,7 +114,14 @@ public class MainController {
 			logger.log(Level.INFO, jsonObject.toString(4));
 		}
 		
+		return jsonObject;
+				
+	}
+	
+	public static void updateFileInfo(JSONObject jsonFile, File file) {
+		jsonFile.put("Can Execute", file.canExecute());
 		
+		logger.log(Level.INFO, "Updated file information.\n" + jsonFile.toString(4));
 	}
 
 }
