@@ -12,50 +12,54 @@ import org.json.JSONObject;
 public class MainController {
 	
 	private static Logger logger = Logger.getLogger(MainController.class.getName());
-
+	private static String fileDestination = System.getProperty("user.dir") + "\\src\\resources\\";
+	private static JSONObject jsonObject;
+	private static File directory;
+	
 	public static void main(String[] args) {
 		
-		String baseDirectory = System.getProperty("user.dir");
-		logger.log(Level.INFO, baseDirectory + ".\n");
 		
 		String fileName = "filename.txt";
 		
-		String fileDestination = baseDirectory + "\\src\\resources\\";
 		logger.log(Level.INFO, fileDestination + ".\n");
 		logger.log(Level.INFO, fileDestination + fileName + ".\n");
 		
-		File directory = new File(fileDestination);
+		directory = new File(fileDestination);
 		
 		String fileNamePath = fileDestination + fileName;
 		
 		File objectFile = new File(fileNamePath);
 		
-		JSONObject jsonFile = new JSONObject(); 
+		JSONObject jsonFileObject = new JSONObject(); 
 		
-		createTextFile(directory, objectFile);
+		directoryExists(directory);
+		
+		createTextFile(objectFile);
 		
 		writeToFile(fileNamePath, "File content.");
 		
 		readFile(objectFile);
 		
 		try {
-			jsonFile = getFileInfo(objectFile);
+			jsonFileObject = getFileInfo(objectFile);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "File probably doesn't exist.\n");
 			e.printStackTrace();
 		}
 		
-		updateFileInfo(jsonFile, objectFile);
+		updateFileInfo(jsonFileObject, objectFile);
 
 	}
 	
-	public static void createTextFile(File directory, File objectFile) {
+	public static void directoryExists(File directory) {
+		if(!directory.exists()) {
+			directory.mkdir();
+		}
+	}
+	
+	public static void createTextFile(File objectFile) {
 		
 		try {
-			
-			if(!directory.exists()) {
-				directory.mkdir();
-			}
 			
 			if(objectFile.createNewFile()) {
 				logger.log(Level.INFO, "File created: " + objectFile.getName() + ".\n");
@@ -71,10 +75,34 @@ public class MainController {
 		
 	}
 	
-	public static void writeToFile(String fileName, String fileContent) {
+	public static void createJSONFile() {
+		
+		String jsonFileName = "fileInfoJSONData.json";
+		String jsonFileNamePath = fileDestination + jsonFileName;
+		File jsonFile = new File(jsonFileNamePath);
 		
 		try {
-			FileWriter fileWriter = new FileWriter(fileName);
+			
+			if(jsonFile.createNewFile()) {
+				logger.log(Level.INFO, "File created: " + jsonFile.getName() + ".\n");
+			} else {
+				logger.log(Level.INFO, "File already exists." + "\n");
+			}
+			
+			
+		} catch(IOException e) {
+			logger.log(Level.WARNING, "Could not create json file." + "\n");
+			e.printStackTrace();
+		}
+		
+		writeToFile(jsonFileNamePath, jsonObject.toString(4));
+		
+	}
+	
+	public static void writeToFile(String fileNamePath, String fileContent) {
+		
+		try {
+			FileWriter fileWriter = new FileWriter(fileNamePath);
 			fileWriter.write(fileContent);
 			fileWriter.close();
 			
@@ -103,7 +131,7 @@ public class MainController {
 	
 	public static JSONObject getFileInfo(File file) throws IOException {
 		
-		JSONObject jsonObject = new JSONObject();
+		jsonObject = new JSONObject();
 		
 		if(file.exists()) {
 			jsonObject.put("File name", file.getName());
@@ -114,14 +142,18 @@ public class MainController {
 			logger.log(Level.INFO, jsonObject.toString(4));
 		}
 		
+		createJSONFile();
+		
 		return jsonObject;
 				
 	}
 	
-	public static void updateFileInfo(JSONObject jsonFile, File file) {
-		jsonFile.put("Can Execute", file.canExecute());
+	public static void updateFileInfo(JSONObject jsonFileObject, File file) {
+		jsonFileObject.put("Can Execute", file.canExecute());
 		
-		logger.log(Level.INFO, "Updated file information.\n" + jsonFile.toString(4));
+		logger.log(Level.INFO, "Updated file information.\n" + jsonFileObject.toString(4));
+		
+		createJSONFile();
 	}
 
 }
